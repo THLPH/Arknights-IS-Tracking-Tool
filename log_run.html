@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Run - Rhodes Island</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Log Operation</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="log_run.html">Log Run</a>
+            <a href="history.html">Run History</a>
+            <a href="#">Strategic Advisor</a>
+        </nav>
+    </header>
+
+    <form action="#" method="POST">
+        <fieldset>
+            <legend>Mission Parameters</legend>
+            <label for="date">Operation Date</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="difficulty">Difficulty Level</label>
+            <input type="number" id="difficulty" name="difficulty" min="0" max="15" required>
+
+            <label for="squad">Starting Squad</label>
+            <select id="squad" name="squad">
+                <option value="1">Leader Squad</option>
+                <option value="2">Gathering Squad</option>
+                </select>
+        </fieldset>
+
+        <fieldset>
+            <legend>Operation Results</legend>
+            <label for="ending">Ending Reached</label>
+            <select id="ending" name="ending">
+                <option value="Ending 1">Ending 1 (Standard)</option>
+                <option value="Ending 2">Ending 2 (Alternate)</option>
+                <option value="Failed">Failed Operation</option>
+            </select>
+
+            <label for="score">Final Score</label>
+            <input type="number" id="score" name="score" required>
+        </fieldset>
+
+        <button type="submit">Submit Record</button>
+    </form>
+</body>
+</html>
