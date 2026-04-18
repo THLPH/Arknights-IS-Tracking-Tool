@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rhodes Island Archive</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Rhodes Island Operations Archive</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/log">Log Run</a>
+            <a href="/history">Run History</a>
+            <a href="/advisor">Strategic Advisor</a>
+        </nav>
+    </header>
+    <div class="panel">
+        <h2>Welcome, Doctor.</h2>
+        <p>This system tracks combat operations, squad performance, and provides strategic advice.</p>
+        
+        <ul class="menu-list">
+            <li>
+                <a href="/log">
+                    <span class="cmd">RUN_LOG</span> Log a new operation run
+                </a>
+            </li>
+            <li>
+                <a href="/history">
+                    <span class="cmd">DATA_ARCHIVE</span> View past run history
+                </a>
+            </li>
+            <li>
+                <a href="/advisor">
+                    <span class="cmd">STRAT_ADVISOR</span> Get strategic advice based on squad synergy
+                </a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

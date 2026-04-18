@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Run History - Rhodes Island</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Operation Run History</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/log">Log Run</a>
+            <a href="/history">Run History</a>
+            <a href="/advisor">Strategic Advisor</a>
+        </nav>
+    </header>
+    <div class="panel">
+        <h2>Past Runs</h2>
+        <table>
+<thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Squad</th>
+                        <th>Diff</th>
+                        <th>Ending</th>
+                        <th>Score</th>
+                        <th>Relics</th>
+                        <th>Operators</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+<tbody>
+                {% for row in runs %}
+                <tr>
+                    <td style="white-space: nowrap;">{{ row['Date'] }}</td>
+                    <td><strong>{{ row['Squad_Name'] }}</strong></td>
+                    <td style="text-align: center;">{{ row['Difficulty_Level'] }}</td>
+                    <td>{{ row['Ending_Reached'] }}</td>
+                    <td>{{ row['Final_Score'] }}</td>
+                    
+                    <td>
+                        {% if row.relics %}
+                            <div class="tag-container">
+                            {% for relic in row.relics %}
+                                <span class="data-tag">{{ relic | replace("'", "") }}</span>
+                            {% endfor %}
+                            </div>
+                        {% else %}
+                            <span style="color: var(--color-text-muted);">None</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if row.operators %}
+                            <div class="tag-container">
+                            {% for op in row.operators %}
+                                <span class="data-tag">{{ op | replace("'", "") }}</span>
+                            {% endfor %}
+                            </div>
+                        {% else %}
+                            <span style="color: var(--color-text-muted);">None</span>
+                        {% endif %}
+                    </td>
+                    
+<td class="action-cell">
+    <div class="button-wrapper">
+        <a href="{{ url_for('edit_run', run_id=row['RunID']) }}" class="terminal-button edit">Edit</a>
+        <form method="post" action="{{ url_for('delete_run', run_id=row['RunID']) }}" style="display:inline;">
+            <button type="submit" class="terminal-button delete" onclick="return confirm('Delete this run?');">Delete</button>
+        </form>
+    </div>
+</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

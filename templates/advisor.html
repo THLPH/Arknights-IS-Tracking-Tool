@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Strategic Advisor - Rhodes Island</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .slider-container { margin: 20px 0; }
+        input[type=range] { width: 100%; }
+        .result-box { background: #1a1a1a; padding: 15px; border-left: 4px solid #ffd633; margin-top: 20px; margin-bottom: 30px; }
+        .risk-value { font-weight: bold; color: #ffd633; }
+        hr { border-color: #3a3a3a; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Strategic Advisor – Operator-Squad Synergy & Risk Analysis</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/log">Log Run</a>
+            <a href="/history">Run History</a>
+            <a href="/advisor">Strategic Advisor</a>
+        </nav>
+    </header>
+    <div class="panel">
+        <!-- ========== PART 1: RISK SLIDER (What-If Analysis) ========== -->
+        <h2>What‑If Risk Analyzer</h2>
+        <p>Select a squad, then adjust the <strong>Risk Factor</strong> slider. The system uses historical volatility (coefficient of variation) to predict expected score under uncertainty.</p>
+        
+        <div class="slider-container">
+            <label>Choose Squad</label>
+            <select id="squadSelect">
+                {% for squad in squads %}
+                    <option value="{{ squad.SquadID }}">{{ squad.Squad_Name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="slider-container">
+            <label>Risk Factor (0 = conservative, 1 = aggressive): <span id="riskValue" class="risk-value">0.00</span></label>
+            <input type="range" id="riskSlider" min="0" max="1" step="0.01" value="0">
+        </div>
+
+        <div class="result-box" id="result">
+            <p><strong>Historical Average Score:</strong> <span id="avgScore">--</span></p>
+            <p><strong>Historical Volatility (CV):</strong> <span id="cv">--</span></p>
+            <p><strong>Expected Score under current risk:</strong> <span id="expectedScore">--</span></p>
+            <p><small>Formula: Expected = Average × (1 - Risk × CV)</small></p>
+        </div>
+
+        <hr>
+
+        <!-- ========== PART 2: SYNERGY DELTA TABLE ========== -->
+        <h2>Synergy Delta Analysis</h2>
+        <p>This table calculates the <strong>win‑rate difference</strong> between runs where you recruited operators that match your squad's best class versus runs where you did not. A positive Synergy Delta means matching the squad's preferred class improves your win rate.</p>
+        <div id="synergyTable">
+            <p>Loading synergy data...</p>
+        </div>
+        <p><small>Formula: Synergy Delta = Win% (matching operators) – Win% (non‑matching operators)</small></p>
+    </div>
+
+    <script>
+        // ========== RISK SLIDER LOGIC ==========
+        const squadSelect = document.getElementById('squadSelect');
+        const riskSlider = document.getElementById('riskSlider');
+        const riskSpan = document.getElementById('riskValue');
+        const avgSpan = document.getElementById('avgScore');
+        const cvSpan = document.getElementById('cv');
+        const expectedSpan = document.getElementById('expectedScore');
+
+        let currentStats = { avg_score: 0, cv: 0 };
+
+        async function loadStats(squadId) {
+            const response = await fetch(`/api/squad_stats/${squadId}`);
+            const data = await response.json();
+            currentStats = { avg_score: data.avg_score, cv: data.cv };
+            avgSpan.innerText = currentStats.avg_score;
+            cvSpan.innerText = currentStats.cv;
+            updateExpected();
+        }
+
+        function updateExpected() {
+            const risk = parseFloat(riskSlider.value);
+            riskSpan.innerText = risk.toFixed(2);
+            let expected = currentStats.avg_score * (1 - risk * currentStats.cv);
+            if (expected < 0) expected = 0;
+            expectedSpan.innerText = expected.toFixed(2);
+        }
+
+        squadSelect.addEventListener('change', () => loadStats(squadSelect.value));
+        riskSlider.addEventListener('input', updateExpected);
+
+        // ========== SYNERGY DELTA TABLE LOGIC ==========
+        async function loadSynergy() {
+            const resp = await fetch('/api/synergy_delta');
+            const data = await resp.json();
+            let html = `<table>
+                        <thead>
+                            <tr>
+                                <th>Squad</th>
+                                <th>Total Runs</th>
+                                <th>Win % (Matching)</th>
+                                <th>Win % (Non‑Matching)</th>
+                                <th>Synergy Delta</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            for (let row of data) {
+                let deltaClass = row.synergy_delta > 0 ? 'data-highlight' : '';
+                html += `<tr>
+                            <td>${row.Squad_Name}</td>
+                            <td>${row.total_runs}</td>
+                            <td>${row.win_rate_matching}%</td>
+                            <td>${row.win_rate_non_matching}%</td>
+                            <td class="${deltaClass}">${row.synergy_delta > 0 ? '+' : ''}${row.synergy_delta}%</td>
+                         </tr>`;
+            }
+            html += `</tbody></table>`;
+            document.getElementById('synergyTable').innerHTML = html;
+        }
+
+        // Initial load
+        loadStats(squadSelect.value);
+        loadSynergy();
+    </script>
+</body>
+</html>
