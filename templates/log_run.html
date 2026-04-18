@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log Run - Rhodes Island</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Log New Operation Run</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/log">Log Run</a>
+            <a href="/history">Run History</a>
+            <a href="/advisor">Strategic Advisor</a>
+        </nav>
+    </header>
+    <div class="panel">
+        <form method="post">
+            <label>Date (YYYY-MM-DD)</label>
+            <input type="date" name="date" required>
+
+            <label>Difficulty Level (0-20)</label>
+            <input type="number" name="difficulty" required>
+
+            <label>Squad</label>
+            <select name="squad" required>
+                {% for squad in squads %}
+                    <option value="{{ squad.SquadID }}">{{ squad.Squad_Name }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Ending Reached</label>
+            <input type="text" name="ending" placeholder="e.g., Ending 1, Failed" required>
+
+            <label>Final Score</label>
+            <input type="number" name="score" required>
+
+<label>Relics Collected</label>
+<div class="selection-container">
+    <input type="text" 
+           class="search-input" 
+           placeholder="SEARCH_RELIC..." 
+           onkeyup="filterList(this, 'relic-grid')"
+           onkeydown="return event.key != 'Enter';"> <div class="scroll-grid" id="relic-grid">
+        {% for relic in relics %}
+        <label class="item-label">
+            <input type="checkbox" name="relics" value="{{ relic.RelicID }}">
+            <span>{{ relic.Name }}</span>
+        </label>
+        {% endfor %}
+    </div>
+</div>
+
+<label>Operators Recruited</label>
+<div class="selection-container">
+    <input type="text" 
+           class="search-input" 
+           placeholder="SEARCH_OPERATOR..." 
+           onkeyup="filterList(this, 'op-grid')"
+           onkeydown="return event.key != 'Enter';"> <div class="scroll-grid" id="op-grid">
+        {% for op in operators %}
+        <label class="item-label">
+            <input type="checkbox" name="operators" value="{{ op.OperatorID }}">
+            <span>{{ op.Name }}</span>
+        </label>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function filterList(input, gridId) {
+    const filter = input.value.toLowerCase().trim();
+    const grid = document.getElementById(gridId);
+    
+    if (!grid) return;
+
+    // Target all labels within this specific grid
+    const items = grid.querySelectorAll('.item-label');
+
+    items.forEach(item => {
+        // Get the text content (Relic or Operator name)
+        const text = item.textContent || item.innerText;
+        
+        if (text.toLowerCase().includes(filter)) {
+            // Show item by removing the hidden class
+            item.classList.remove('hidden-search-item');
+        } else {
+            // Hide item by adding the hidden class
+            item.classList.add('hidden-search-item');
+        }
+    });
+}
+</script>
+
+            <button type="submit">Log Run</button>
+        </form>
+    </div>
+</body>
+</html>
