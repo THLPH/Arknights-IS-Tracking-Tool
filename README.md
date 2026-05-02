@@ -1,5 +1,3 @@
-The following sections describe the technical architecture and primary functionality of the Rhodes Island Exploration Archive. This documentation follows the structure and technical terminology established in the project development reports.
-
 ### 1. Introduction
 **The Rhodes Island Exploration Archive** is a custom database application developed to track and optimize player performance in the *Integrated Strategies* game mode of the mobile game *Arknights*. While existing community tools provide static game data, they lack personalized tracking features for individual users. This application addresses that gap by logging specific operational data, including squad choices, operator drafts, relic acquisitions, and final scores. The system leverages complex SQL queries to reveal personalized winning patterns and provide mathematical strategic advice.
 
